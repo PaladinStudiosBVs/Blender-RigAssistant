@@ -64,6 +64,7 @@ Control Shapes
 # Requirements
 
 Has been tested on Blender version 3.0 up to version 4.1. 
+Basic rigging knowledge required
 
 <a name="develop"/>
 
