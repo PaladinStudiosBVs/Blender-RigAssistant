@@ -10,6 +10,26 @@ class OBJECT_OT_create_control_bone(bpy.types.Operator):
     # Depending which space is selected CTRL_ bone is either created in world or local space
 
     def execute (self, context):
+        boneCollections = bpy.context.object.data.collections_all;
+        visibilityCache = []
+        for i in boneCollections:
+            visibilityCache.append(i.is_visible)
+            
+        for b in range(0,len(visibilityCache)):
+            boneCollections[b].is_visible = True
+
+        if bpy.context.selected_pose_bones is None and bpy.context.selected_bones is None :
+            for i in range(0,len(visibilityCache)):
+                boneCollections[i].is_visible = visibilityCache[i]
+            visibilityCache.clear
+            
+            self.report({"WARNING"}, "No Bones selected Check if they are visible")
+            return {'CANCELLED'}
+        
+        # Collection stuff: Check if there's a collection CTRL if it's not, make it
+        if boneCollections.get('CTRL') is None:
+            bcoll = bpy.context.object.data.collections.new('CTRL')
+
         current_mode = bpy.context.object.mode
         if current_mode == 'EDIT' or current_mode == 'POSE':
             bpy.ops.object.mode_set(mode='EDIT')
@@ -33,6 +53,9 @@ class OBJECT_OT_create_control_bone(bpy.types.Operator):
                     if  bpy.context.object.data.edit_bones.get("CNSTR_" + b.name):
                         bpy.context.object.data.edit_bones["CNSTR_" + b.name].parent = bpy.context.object.data.edit_bones[cb.name]
                 
+                
+                   
+                
             if context.scene.local_world_switch.world_local_enum == 'OP2':
                 for b in bpy.context.selected_bones:
                     if  bpy.context.object.data.edit_bones.get("CTRL_" + b.name):
@@ -46,7 +69,19 @@ class OBJECT_OT_create_control_bone(bpy.types.Operator):
                     if  bpy.context.object.data.edit_bones.get("CNSTR_" + b.name):
                         bpy.context.object.data.edit_bones["CNSTR_" + b.name].parent = bpy.context.object.data.edit_bones[cb.name]
 
+            bpy.ops.object.mode_set(mode='POSE')
+            bpy.ops.pose.select_all(action='DESELECT')
+            for pb in pbones:    
+                #Put the bone into the right collection
+                bpy.context.object.data.collections['CTRL'].assign(bpy.context.object.pose.bones["CTRL_" + pbones[current_bone].name])
+                bpy.context.object.data.bones["CTRL_" + pbones[current_bone].name].select = True  
+                current_bone += 1            
+                
+            current_bone=0
 
+            for i in range(0,len(visibilityCache)):
+                boneCollections[i].is_visible = visibilityCache[i]
+            visibilityCache.clear
 
             bpy.ops.object.mode_set(mode= current_mode)
             return{'FINISHED'}
@@ -62,14 +97,35 @@ class OBJECT_OT_create_local_offset_bone(bpy.types.Operator):
     # When 2 bones are selected it duplicates the first selected bone and parents it under the active bone.
 
     def execute (self, context):
+        boneCollections = bpy.context.object.data.collections_all;
+        visibilityCache = []
+        for i in boneCollections:
+            visibilityCache.append(i.is_visible)
+            
+        for b in range(0,len(visibilityCache)):
+            boneCollections[b].is_visible = True
+
+        if bpy.context.selected_pose_bones is None and bpy.context.selected_bones is None :
+            for i in range(0,len(visibilityCache)):
+                boneCollections[i].is_visible = visibilityCache[i]
+            visibilityCache.clear
+            
+            self.report({"WARNING"}, "No Bones selected Check if they are visible")
+            return {'CANCELLED'}
+        
         current_mode = bpy.context.object.mode
         if current_mode == 'EDIT' or current_mode == 'POSE':
+            bpy.ops.object.mode_set(mode='POSE')
+            pbones = bpy.context.selected_pose_bones
             bpy.ops.object.mode_set(mode='EDIT')
             armanm = bpy.context.active_object
             armature = bpy.context.object.data
             selected_bones = bpy.context.selected_bones
             selected_active_bone = bpy.context.object.data.edit_bones.active
-        
+            
+            # Collection stuff: Check if there's a collection LocOff if it's not, make it
+            if boneCollections.get('LocOff') is None:
+                bcoll = bpy.context.object.data.collections.new('LocOff')
 
             if len(selected_bones) == 2:
                 if selected_bones[0] == selected_active_bone:
@@ -84,6 +140,8 @@ class OBJECT_OT_create_local_offset_bone(bpy.types.Operator):
                 cb.matrix = selected_bones[active].matrix
                 bpy.context.object.data.edit_bones.get("LOC_" + selected_bones[active].name).use_deform = False
                 bpy.context.object.data.edit_bones[cb.name].parent = bpy.context.object.data.edit_bones[selected_active_bone.name]
+                bpy.ops.object.mode_set(mode='POSE')
+                bpy.context.object.data.collections['LocOff'].assign(bpy.context.object.pose.bones["LOC_" + pbones[active].name])
 
             if len(selected_bones) == 1:
                 cb = bpy.context.object.data.edit_bones.new("OFF_" + selected_bones[0].name)
@@ -92,7 +150,13 @@ class OBJECT_OT_create_local_offset_bone(bpy.types.Operator):
                 cb.matrix = selected_bones[0].matrix
                 bpy.context.object.data.edit_bones.get("OFF_" + selected_bones[0].name).use_deform = False
                 bpy.context.object.data.edit_bones[selected_active_bone.name].parent = bpy.context.object.data.edit_bones[cb.name]
-             
+                bpy.ops.object.mode_set(mode='POSE')
+                bpy.context.object.data.collections['LocOff'].assign(bpy.context.object.pose.bones["OFF_" + pbones[0].name])
+
+            for i in range(0,len(visibilityCache)):
+                boneCollections[i].is_visible = visibilityCache[i]
+            visibilityCache.clear
+
             bpy.ops.object.mode_set(mode= current_mode)
             return{'FINISHED'}
         else:

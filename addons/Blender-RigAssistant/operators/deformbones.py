@@ -18,11 +18,21 @@ class OBJECT_OT_create_armature(bpy.types.Operator):
     # Creates a starting armature with a zero-ed out bone the is called root
 
     def execute (self, context):
+
         if bpy.context.selected_objects:
             bpy.ops.object.mode_set(mode = 'OBJECT')
         bpy.ops.object.armature_add(enter_editmode=True, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
         bpy.context.active_bone.name = "root"
         bpy.ops.transform.translate(value=(0, 1, -1), orient_type='GLOBAL')
+        bpy.context.object.data.collections.new('Deform')
+        bpy.ops.object.mode_set(mode='POSE')
+        bpy.context.object.data.collections['Deform'].assign(bpy.context.object.pose.bones['root'])
+        bpy.context.object.data.collections.remove(bpy.context.object.data.collections['Bones'])
+        bpy.context.object.data.collections.new('CNSTR')
+        bpy.context.object.data.collections.new('CTRL')
+        bpy.context.object.data.collections.new('LocOff')
+        bpy.ops.object.mode_set(mode='EDIT')
+        
         
 
         return{'FINISHED'} 
@@ -74,6 +84,27 @@ class OBJECT_OT_chain_parent(bpy.types.Operator):
         else:
             self.report({'WARNING'}, "No active object, could not finish")
             return {'CANCELLED'}
+
+class OBJECT_OT_chain_rename(bpy.types.Operator):
+    """Rename bones to chains"""
+    bl_idname = 'object.chain_rename'
+    bl_label = "Chain Rename"
+    
+    text : bpy.props.StringProperty(name = "Enter Text", default="")
+    startat : bpy.props.IntProperty(name = "Start at", default = 1)
+
+    def execute(self, context):
+        number = self.startat
+        digits = len(str(len(bpy.context.selected_bones) + self.startat - 1))  # Determine the number of digits needed
+        for bone in bpy.context.selected_bones:
+            bone.name = f"{self.text}_{number:0{digits}d}"  # Use format specifier for padding with leading zeros
+            number += 1
+        
+        return {'FINISHED'}
+    
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+        
 
 class OBJECT_OT_remove_roll(bpy.types.Operator):
     bl_idname = 'object.remove_roll'
