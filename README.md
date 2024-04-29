@@ -65,6 +65,7 @@ Control Shapes
 # Requirements
 
 Has been tested on Blender version 3.0 up to version 4.1.
+Features relating to the bone collections will work from version 4.0 and up.
 Basic rigging knowledge required
 
 <a name="develop"/>
