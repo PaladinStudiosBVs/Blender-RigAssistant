@@ -16,8 +16,8 @@ import bpy
 from mathutils import Vector
 from .operators.rigshapes import OBJECT_OT_create_circle, OBJECT_OT_create_cube, OBJECT_OT_create_piramid, OBJECT_OT_create_sphere, OBJECT_OT_create_square
 from .operators.ctrlbones import OBJECT_OT_suffix_l, OBJECT_OT_suffix_r, OBJECT_OT_create_control_bone, OBJECT_OT_create_local_offset_bone, OBJECT_OT_add_controls, OBJECT_OT_remove_controls
-from .operators.cnstrbones import OBJECT_OT_remove_all_cnstr, OBJECT_OT_create_cnstr, OBJECT_OT_add_cnstr, OBJECT_OT_remove_cnstr_bone, OBJECT_OT_remove_selected_bone, OBJECT_OT_append_cnstr
-from .operators.deformbones import OBJECT_OT_create_armature, OBJECT_OT_disconnect_bones, OBJECT_OT_remove_roll, OBJECT_OT_chain_parent
+from .operators.cnstrbones import OBJECT_OT_remove_all_cnstr, OBJECT_OT_create_cnstr, OBJECT_OT_add_cnstr, OBJECT_OT_remove_cnstr_bone, OBJECT_OT_remove_selected_bone, OBJECT_OT_append_cnstr, OBJECT_OT_create_cnstr_ctrl
+from .operators.deformbones import OBJECT_OT_create_armature, OBJECT_OT_disconnect_bones, OBJECT_OT_remove_roll, OBJECT_OT_chain_parent,OBJECT_OT_chain_rename
 
 # Tells the which constraint to pick when using create constraint add constraint or append constraint.
 class constraint_properties(bpy.types.PropertyGroup):
@@ -60,6 +60,12 @@ class VIEW3D_PT_blender_rig_assistant(bpy.types.Panel):
         coltop.operator('object.disconnect_bones', icon = 'BONE_DATA')
         coltop.operator('object.remove_roll', icon ='OUTLINER_DATA_GREASEPENCIL')
         coltop.operator('object.chain_parent',icon ='DECORATE_LINKED')
+        coltop.operator('object.chain_rename',icon ='DECORATE_LINKED')
+        self.layout.separator()
+        
+        rowa=self.layout.row(align=True)
+        rowa.operator('object.prefix_l', icon ='EVENT_L')
+        rowa.operator('object.prefix_r', icon ='EVENT_R')
         self.layout.separator()
 
         col= self.layout.column()
@@ -83,13 +89,9 @@ class VIEW3D_PT_blender_rig_assistant(bpy.types.Panel):
         colc.prop(context.scene.local_world_switch, "world_local_enum")
         colc.operator('object.create_control_bone', icon = 'OUTLINER_DATA_ARMATURE')
         colc.operator('object.create_local_offset_bone' , icon = 'OUTLINER_DATA_ARMATURE')
+        colc.operator('object.create_cnstr_ctrl',icon ='BONE_DATA')
         self.layout.separator()
         
-        rowa=self.layout.row(align=True)
-        rowa.operator('object.prefix_l', icon ='EVENT_L')
-        rowa.operator('object.prefix_r', icon ='EVENT_R')
-        self.layout.separator()
-
         cold=self.layout.column()
         cold.label(text="Control Shapes")
         cold.operator('object.add_controls', icon = 'MOD_SKIN')
@@ -110,6 +112,8 @@ blender_classes = [
     OBJECT_OT_create_cnstr,
     OBJECT_OT_add_cnstr,
     OBJECT_OT_chain_parent,
+    OBJECT_OT_chain_rename,
+    OBJECT_OT_create_cnstr_ctrl,
     VIEW3D_PT_blender_rig_assistant,
     OBJECT_OT_remove_cnstr_bone,
     OBJECT_OT_remove_selected_bone,
