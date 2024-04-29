@@ -6,6 +6,7 @@
  * [Best Practices](#bestpractices)
  * [Requirements](#requirements)
  * [Developing & Testing](#develop)
+ * [First time setup](#first-time)
  * [Creating a release](#release)
 
 <a name="description"/>
@@ -15,12 +16,12 @@
 The Blender Rig Assistant helps speed up the rigging process of game assets by supporting an older but very stable workflow. This workflow uses 3 main types of bones:
 
 * Deform bones: Used in by blender and in the game engine to deform the character
-  
+
 * Cnstr_ bones: Used as constraints for the deform bones. They have the same orientation as the deform bones so you don't have to worry about local/pose/world space in your constraints
-  
+
 * Ctrl_ bones: Used to control the rig. These bones are what the animator will use to make their poses.
 
-When done correctly 2 hierarchies of bones are created linked by constraints, a "Deform Hierarchy" that will be exported to the game engine and a "Control Hierarchy" that will be used by the animator to create animations 
+When done correctly 2 hierarchies of bones are created linked by constraints, a "Deform Hierarchy" that will be exported to the game engine and a "Control Hierarchy" that will be used by the animator to create animations
 
 There are also a lot of smaller tools that will increase productivity and help speed up your rigging workflow
 
@@ -31,12 +32,12 @@ There are also a lot of smaller tools that will increase productivity and help s
 The tool bar has been setup to work from top to bottom. So to start create an armature and end with adding control shapes for the animator to easily select controls.
 
 Armature
-* Create An Armature: creates an armature to start your rig 
+* Create An Armature: creates an armature to start your rig
 * Dissconnect Bones: Bones are linked together can't use translation. This is a blender thing and no game engine supports these connected bones. Always disconnect!
 * Remove Roll: Removes Roll from bones. Recommended when you want to control your rotations better.
 * Chain Parent: Special mode where you are able to quickly create a linear hierarchy. Each bone you select after the first one will be parented to the previous one
 
-Constraints  
+Constraints
 * Type: Selects the type of constraints you will get when using the constraint buttons
 * Create Constraint Bone: Creates a duplicate of your selected deform bones with the prefix CNSTR_ and constraints it using the type that was set above
 * Append Constraint To Bone: Creates another constraint on the selected deform bone with the same CNSTR_ bone as a target
@@ -63,7 +64,7 @@ Control Shapes
 
 # Requirements
 
-Has been tested on Blender version 3.0 up to version 4.1. 
+Has been tested on Blender version 3.0 up to version 4.1.
 Basic rigging knowledge required
 
 <a name="develop"/>
@@ -84,13 +85,27 @@ Click the checkbox to enable the add on.
 
 <b> Note: </b> When the addon has been enabled once, this step can be skipped. Reloading scripts is only required.
 
-The addon is now available in the main viewport on the 'N' panel. If it isn't visible, press `N` to reveal the panel and click on `Paladin Studios`. 
+The addon is now available in the main viewport on the 'N' panel. If it isn't visible, press `N` to reveal the panel and click on `Paladin Studios`.
+
+<a name="first-time"/>
+
+# First time setup
+Double click the setup files depending on your Operating System:
+- Windows: `windows_setup.bat`
+- Mac: `mac_setup.command`
+
+This will create a python environment and install the `fake-bpy-module` package
 
 <a name="release"/>
 
 # Creating a new release
-Checkout the repository and switch to the branch you need a release from.
-
-Zip the `Blender-RigAssistant` folder to a `Blender-RigAssistant`x.x.x.zip`, where x.x.x should be the relevant version number.
-
-The zip file can now be distributed and installed using the add on preferences menu, by clicking `Install` and selecting the .zip file.
+- Update the version in **addons/Blender-RigAssistant/\_\_init__.py**. Check https://semver.org/ for when to increment which version
+  - Version looks like this: "version": (0, 0, 2), where first number is MAJOR, second is MINOR and third is PATCH
+- Commit the version changes
+- In GitHub:
+  - Go to Actions
+  - Release new version workflow
+  - Run workflow
+  - Select branch
+  - Run workflow
+- A new release will be added to Github Releases once the workflow finishes
