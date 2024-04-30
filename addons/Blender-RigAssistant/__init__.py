@@ -60,7 +60,7 @@ class VIEW3D_PT_blender_rig_assistant(bpy.types.Panel):
         coltop.operator('object.disconnect_bones', icon = 'BONE_DATA')
         coltop.operator('object.remove_roll', icon ='OUTLINER_DATA_GREASEPENCIL')
         coltop.operator('object.chain_parent',icon ='DECORATE_LINKED')
-        coltop.operator('object.chain_rename',icon ='DECORATE_LINKED')
+        coltop.operator('object.chain_rename',icon ='FILE_TEXT')
         self.layout.separator()
         
         rowa=self.layout.row(align=True)
@@ -88,8 +88,8 @@ class VIEW3D_PT_blender_rig_assistant(bpy.types.Panel):
         colc.label(text="Controls and Offsets")
         colc.prop(context.scene.local_world_switch, "world_local_enum")
         colc.operator('object.create_control_bone', icon = 'OUTLINER_DATA_ARMATURE')
-        colc.operator('object.create_local_offset_bone' , icon = 'OUTLINER_DATA_ARMATURE')
-        colc.operator('object.create_cnstr_ctrl',icon ='BONE_DATA')
+        colc.operator('object.create_local_offset_bone' , icon = 'CON_ARMATURE')
+        colc.operator('object.create_cnstr_ctrl',icon ='OUTLINER_OB_ARMATURE')
         self.layout.separator()
         
         cold=self.layout.column()
