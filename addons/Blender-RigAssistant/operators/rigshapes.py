@@ -55,12 +55,10 @@ class OBJECT_OT_create_sphere(bpy.types.Operator):
     def execute (self, context):
         if bpy.context.selected_objects:
             bpy.ops.object.mode_set(mode = 'OBJECT')
-        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1)
-        bpy.context.object.name = "sphere_shpctrl"
-        bpy.ops.object.mode_set(mode = 'EDIT')
-        bpy.ops.mesh.delete(type='ONLY_FACE')
+        bpy.ops.mesh.primitive_circle_add(enter_editmode=True)
+        bpy.ops.mesh.primitive_circle_add(rotation = (1.5707963267948966, 0, 0))
+        bpy.ops.mesh.primitive_circle_add(rotation = (0, 1.5707963267948966, 0))
         bpy.ops.object.mode_set(mode = 'OBJECT')
-        bpy.context.object.show_wire = True
 
         return{'FINISHED'} 
 
